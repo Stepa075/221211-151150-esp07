@@ -76,7 +76,7 @@ void loop() {
     bot.sendMessage(CHAT_ID, "Сработка зона1!!!", "");
     Serial.println("Сработка зона1!!!" + arrZones[i]);
     // count -= 1;                                                                             // Уменьшаем счётчик на 1  
-    delay(1000);                                                                           // Пауза 5 секунд  
+    delay(500);                                                                           // Пауза 5 секунд  
   }
   }
 
