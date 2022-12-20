@@ -15,21 +15,31 @@
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOTtoken, client);
 
-const int waterSensor = A0;                                       // Сенсор протечки
-bool waterDetected = false;
-int count = 3;                                                    // Количество сообщений
-const int drop = 250;                                             // Капля
+// const int waterSensor = A0;                                       // Сенсор протечки
+// bool waterDetected = false;
+// int count = 3;                                                    // Количество сообщений
+// const int drop = 250;                                             // Капля
 
-int alarmPin1 = 4; // к выводу 4 подключён геркон 1 
+int alarmPin1 = 4;               // к выводу 4 подключён геркон 1 
+int alarmPin2 = 5;
+int alarmPin3 = 9;
+int alarmPin4 = 10;
+
 
 void setup() {
   Serial.begin(115200);
   client.setInsecure();
   
-  pinMode(waterSensor, INPUT_PULLUP);            // Внутренняя подтяжка сенсора  INPUT_PULLUP
+  // pinMode(waterSensor, INPUT_PULLUP);            // Внутренняя подтяжка сенсора  INPUT_PULLUP
   
   pinMode(alarmPin1, INPUT_PULLUP); // задаём вывод 4 в качестве входа (будем считывать с него)
   digitalWrite(alarmPin1, HIGH); // активируем внутренний подтягивающий резистор вывода
+  pinMode(alarmPin2, INPUT_PULLUP);
+  digitalWrite(alarmPin2, HIGH);
+  pinMode(alarmPin3, INPUT_PULLUP);
+  digitalWrite(alarmPin3, HIGH);
+  pinMode(alarmPin4, INPUT_PULLUP);
+  digitalWrite(alarmPin4, HIGH);
 
   // Attempt to connect to Wifi network:
   Serial.print("Соединение с Wifi: ");
@@ -49,6 +59,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   Serial.println("Бот <Охрана> стартовал");
+  bot.sendMessage(CHAT_ID, "WiFi соединение установлено", "");
   bot.sendMessage(CHAT_ID, "Бот <Охрана> стартовал", "");
 }
 
