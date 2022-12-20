@@ -73,7 +73,7 @@ void loop() {
   for (int i = 0; i<sizeof(arrZones)/sizeof(int); i++){
     int gerkonValue1 = digitalRead(arrZones[i]);                                                // Считываем значение с A0   
   if(gerkonValue1 == LOW){
-    bot.sendMessage(CHAT_ID, "Сработка зона1!!!", "");
+    bot.sendMessage(CHAT_ID, "Сработка зона1!!!" + arrZones[i], "");
     Serial.println("Сработка зона1!!!" + arrZones[i]);
     // count -= 1;                                                                             // Уменьшаем счётчик на 1  
     delay(500);                                                                           // Пауза 5 секунд  
