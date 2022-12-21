@@ -14,8 +14,8 @@ const char* password = "1234567891";
 #define BOTtoken "5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE"  // Ваш Токен
 #define CHAT_ID "-1001858191181"                                      // ID чата
 
-#define SDA = 0
-#define SCL = 2
+#define SCL 0
+#define SDA 2
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 WiFiClientSecure client;
@@ -39,7 +39,7 @@ int cost_of_try = 0;
 bool wifi = true;
 
 void setup() {
-               
+  Wire.begin(SDA, SCL);             
   lcd.init(); // initialize the lcd 
   lcd.backlight();
   lcd.clear();
