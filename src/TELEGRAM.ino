@@ -5,17 +5,18 @@
 #include <ArduinoJson.h>
 #include <SoftwareSerial.h>
 // Замените на свои сетевые данные
-  const char* ssid = "WIFI_IOT";
-  const char* password = "1234567891";
+const char* ssid = "WIFI_IOT";
+const char* password = "1234567891";
 
 // Инициализация Telegram бота
 #define BOTtoken "5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE"  // Ваш Токен
 #define CHAT_ID "-1001858191181"                                      // ID чата
 
-SoftwareSerial GSMport(2, 3);
-
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOTtoken, client);
+
+SoftwareSerial GSMport(2, 3);
+
 
 // const int waterSensor = A0;                                       // Сенсор протечки
 // bool waterDetected = false;
@@ -75,11 +76,13 @@ void loop() {
   
   for (int i = 0; i<sizeof(arrZones)/sizeof(int); i++){
     int gerkonValue1 = digitalRead(arrZones[i]);                                                // Считываем значение с A0   
-  if(gerkonValue1 == LOW){
-    bot.sendMessage(CHAT_ID, "Сработка!!!" + arrZones[i], "");
-    Serial.println("Сработка!!!" + arrZones[i]);
-    // count -= 1;                                                                             // Уменьшаем счётчик на 1  
-    delay(500);                                                                           // Пауза 5 секунд  
+    if(gerkonValue1 == LOW){
+      bot.sendMessage(CHAT_ID, "Сработка!!!" + arrZones[i], "");
+      Serial.println("Сработка!!!" + arrZones[i]);
+      gprs_send(String(arrZones[i]));
+      delay(100);
+      // count -= 1;                                                                             // Уменьшаем счётчик на 1  
+    delay(1000);                                                                           // Пауза 5 секунд  
   }
   }
 
