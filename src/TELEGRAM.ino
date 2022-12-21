@@ -12,7 +12,7 @@
 #define BOTtoken "5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE"  // Ваш Токен
 #define CHAT_ID "-1001858191181"                                      // ID чата
 
-SoftwareSerial SerialAT(2, 3);
+SoftwareSerial GSMport(2, 3);
 
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOTtoken, client);
@@ -32,6 +32,9 @@ void setup() {
   Serial.begin(115200);
   client.setInsecure();
   
+  GSMport.begin(9600);
+  gprs_init();
+
   // pinMode(waterSensor, INPUT_PULLUP);            // Внутренняя подтяжка сенсора  INPUT_PULLUP
   
   pinMode(zone1, INPUT_PULLUP); // задаём выводы в качестве входа (будем считывать с него)
@@ -73,14 +76,78 @@ void loop() {
   for (int i = 0; i<sizeof(arrZones)/sizeof(int); i++){
     int gerkonValue1 = digitalRead(arrZones[i]);                                                // Считываем значение с A0   
   if(gerkonValue1 == LOW){
-    bot.sendMessage(CHAT_ID, "Сработка зона1!!!" + arrZones[i], "");
-    Serial.println("Сработка зона1!!!" + arrZones[i]);
+    bot.sendMessage(CHAT_ID, "Сработка!!!" + arrZones[i], "");
+    Serial.println("Сработка!!!" + arrZones[i]);
     // count -= 1;                                                                             // Уменьшаем счётчик на 1  
     delay(500);                                                                           // Пауза 5 секунд  
   }
   }
 
+}  
+  
+void gprs_init() {  //Процедура начальной инициализации GSM модуля
+  int d = 500;
+  int ATsCount = 7;
+  String ATs[] = {  //массив АТ команд
+    "AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"",  //Установка настроек подключения
+    "AT+SAPBR=3,1,\"APN\",\"internet.tele2.ru\"",
+    "AT+SAPBR=3,1,\"USER\",\"tele2\"",
+    "AT+SAPBR=3,1,\"PWD\",\"tele2\"",
+    "AT+SAPBR=1,1",  //Устанавливаем GPRS соединение
+    "AT+HTTPINIT",  //Инициализация http сервиса
+    "AT+HTTPPARA=\"CID\",1"  //Установка CID параметра для http сессии
+  };
+  int ATsDelays[] = {6, 1, 1, 1, 3, 3, 1}; //массив задержек
+  Serial.println("GPRG init start");
+  for (int i = 0; i < ATsCount; i++) {
+    Serial.println(ATs[i]);  //посылаем в монитор порта
+    GSMport.println(ATs[i]);  //посылаем в GSM модуль
+    delay(d * ATsDelays[i]);
+    Serial.println(ReadGSM());  //показываем ответ от GSM модуля
+    delay(d);
+  }
+  Serial.println("GPRG init complete");
+}
 
+void gprs_send(String data) {  //Процедура отправки данных на сервер
+  //отправка данных на сайт
+  int d = 400;
+  Serial.println("Send start");
+  Serial.println("setup url");
+  GSMport.println("AT+HTTPPARA=\"URL\",\"http://mysite.ru/?a=" + data + "\"");
+  delay(d * 2);
+  Serial.println(ReadGSM());
+  delay(d);
+  Serial.println("GET url");
+  GSMport.println("AT+HTTPACTION=0");
+  delay(d * 2);
+  Serial.println(ReadGSM());
+  delay(d);
+  Serial.println("Send done");
+}
+
+String ReadGSM() {  //функция чтения данных от GSM модуля
+  int c;
+  String v;
+  while (GSMport.available()) {  //сохраняем входную строку в переменную v
+    c = GSMport.read();
+    v += char(c);
+    delay(10);
+  }
+  return v;
+}  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // int gerkonValue1 = digitalRead(zone1);                                                // Считываем значение с A0   
   // if(gerkonValue1 == LOW){
   //   bot.sendMessage(CHAT_ID, "Сработка зона1!!!", "");
@@ -113,7 +180,7 @@ void loop() {
 
 
 
-}
+
 
   
   
