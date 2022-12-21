@@ -1,9 +1,11 @@
 
+#include <Wire.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <UniversalTelegramBot.h>
 #include <ArduinoJson.h>
 #include <SoftwareSerial.h>
+#include <LiquidCrystal_I2C.h>
 // Замените на свои сетевые данные
 const char* ssid = "WIFI_IOT";
 const char* password = "1234567891";
@@ -12,10 +14,14 @@ const char* password = "1234567891";
 #define BOTtoken "5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE"  // Ваш Токен
 #define CHAT_ID "-1001858191181"                                      // ID чата
 
+#define SDA = 0
+#define SCL = 2
+LiquidCrystal_I2C lcd(0x27,16,2);
+
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOTtoken, client);
 
-SoftwareSerial GSMport(2, 3);
+SoftwareSerial GSMport(1, 3);
 
 // String URL = "http://api.telegram.org/bot5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE/sendMessage?chat_id=-1001858191181&text=Hi_Eweryone!";
 // const int waterSensor = A0;                                       // Сенсор протечки
@@ -33,6 +39,12 @@ int cost_of_try = 0;
 bool wifi = true;
 
 void setup() {
+               
+  lcd.init(); // initialize the lcd 
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Hello World!");
   Serial.begin(115200);
   client.setInsecure();
   
