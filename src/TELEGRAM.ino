@@ -17,7 +17,7 @@ UniversalTelegramBot bot(BOTtoken, client);
 
 SoftwareSerial GSMport(2, 3);
 
-String UUU = "https://api.telegram.org/bot5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE/sendMessage?chat_id=-1001858191181&text=Hi Eweryone!";
+String URL = "http://api.telegram.org/bot5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE/sendMessage?chat_id=-1001858191181&text=Hi_Eweryone!";
 // const int waterSensor = A0;                                       // Сенсор протечки
 // bool waterDetected = false;
 // int count = 3;                                                    // Количество сообщений
@@ -117,7 +117,7 @@ void gprs_send(String data) {  //Процедура отправки данны�
   int d = 400;
   Serial.println("Send start");
   Serial.println("setup url");
-  GSMport.println("AT+HTTPPARA=\"URL\",\"http://mysite.ru/?a=" + data + "\"");
+  GSMport.println("AT+HTTPPARA=\"URL\",\"http://api.telegram.org/bot" + String(BOTtoken) + "/sendMessage?chat_id=" + String(CHAT_ID) + "&text=" + data + "\"");
   delay(d * 2);
   Serial.println(ReadGSM());
   delay(d);
