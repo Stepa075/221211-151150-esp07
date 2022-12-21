@@ -17,7 +17,7 @@ UniversalTelegramBot bot(BOTtoken, client);
 
 SoftwareSerial GSMport(2, 3);
 
-
+String UUU = "https://api.telegram.org/bot5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE/sendMessage?chat_id=-1001858191181&text=Hi Eweryone!";
 // const int waterSensor = A0;                                       // Сенсор протечки
 // bool waterDetected = false;
 // int count = 3;                                                    // Количество сообщений
