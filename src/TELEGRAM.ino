@@ -17,7 +17,7 @@ UniversalTelegramBot bot(BOTtoken, client);
 
 SoftwareSerial GSMport(2, 3);
 
-String URL = "http://api.telegram.org/bot5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE/sendMessage?chat_id=-1001858191181&text=Hi_Eweryone!";
+// String URL = "http://api.telegram.org/bot5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnffROO3zE/sendMessage?chat_id=-1001858191181&text=Hi_Eweryone!";
 // const int waterSensor = A0;                                       // Сенсор протечки
 // bool waterDetected = false;
 // int count = 3;                                                    // Количество сообщений
@@ -25,9 +25,12 @@ String URL = "http://api.telegram.org/bot5906286565:AAF71BxPYkX6sWpgz1wGTdtyKlnf
 
 int zone1 = 4;               // к выводу 4 подключён геркон 1 
 int zone2 = 5;
-int zone3 = 9;
-int zone4 = 10;
+int zone3 = 12;
+int zone4 = 14;
 int arrZones[] = {zone1, zone2, zone3, zone4};
+int flag = 0;
+int cost_of_try = 0;
+bool wifi = true;
 
 void setup() {
   Serial.begin(115200);
@@ -54,8 +57,13 @@ void setup() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
+  
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
+    // cost_of_try += 1;
+    // if (cost_of_try >= 20){
+    //   start_modem();
+    // }
     delay(500);
   }
 
@@ -67,24 +75,37 @@ void setup() {
   Serial.println("Бот <Охрана> стартовал");
   bot.sendMessage(CHAT_ID, "WiFi соединение установлено", "");
   bot.sendMessage(CHAT_ID, "Бот <Охрана> стартовал", "");
+
+  
+  
 }
 
 
 
 
 void loop() {
-  
-  for (int i = 0; i<sizeof(arrZones)/sizeof(int); i++){
+  int i;
+  for (i = 0; i<4; i=i+1){
     int gerkonValue1 = digitalRead(arrZones[i]);                                                // Считываем значение с A0   
-    if(gerkonValue1 == LOW){
-      bot.sendMessage(CHAT_ID, "Сработка!!!" + arrZones[i], "");
-      Serial.println("Сработка!!!" + arrZones[i]);
-      gprs_send(String(arrZones[i]));
+    if(gerkonValue1 == LOW && flag == 0){
+      bot.sendMessage(CHAT_ID, "Сработка!!!" + String(arrZones[i]), "");
+      Serial.println("Сработка!!!" + String(arrZones[i]));
+      flag = arrZones[i];
+      Serial.println(String(flag));
+      gerkonValue1 = HIGH;
       delay(100);
-      // count -= 1;                                                                             // Уменьшаем счётчик на 1  
-    delay(1000);                                                                           // Пауза 5 секунд  
+      
+    }
+    else if(flag != 0){int gv = digitalRead(flag);
+         if (gv == HIGH){Serial.println("Vosstanovlenie datchika " + String(flag));
+         flag = 0;
+         }
+    }
+       // gprs_send(String(arrZones[i]));
+       // count -= 1;                                                                             // Уменьшаем счётчик на 1  
+    delay(1000);
   }
-  }
+   
 
 }  
   
@@ -94,14 +115,14 @@ void gprs_init() {  //Процедура начальной инициализа
   String ATs[] = {  //массив АТ команд
     "AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"",  //Установка настроек подключения
     "AT+SAPBR=3,1,\"APN\",\"internet.tele2.ru\"",
-    "AT+SAPBR=3,1,\"USER\",\"tele2\"",
-    "AT+SAPBR=3,1,\"PWD\",\"tele2\"",
+    "AT+SAPBR=3,1,\"USER\",\"\"",
+    "AT+SAPBR=3,1,\"PWD\",\"\"",
     "AT+SAPBR=1,1",  //Устанавливаем GPRS соединение
     "AT+HTTPINIT",  //Инициализация http сервиса
     "AT+HTTPPARA=\"CID\",1"  //Установка CID параметра для http сессии
   };
   int ATsDelays[] = {6, 1, 1, 1, 3, 3, 1}; //массив задержек
-  Serial.println("GPRG init start");
+  Serial.println("GPRS init start");
   for (int i = 0; i < ATsCount; i++) {
     Serial.println(ATs[i]);  //посылаем в монитор порта
     GSMport.println(ATs[i]);  //посылаем в GSM модуль
@@ -140,7 +161,10 @@ String ReadGSM() {  //функция чтения данных от GSM моду
   return v;
 }  
   
-  
+// void start_modem(){
+//     GSMport.begin(9600);
+//   gprs_init();
+//   }  
   
   
   
