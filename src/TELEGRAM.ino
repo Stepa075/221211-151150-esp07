@@ -97,20 +97,20 @@ void setup() {
 
 void loop() {
   int i;
-  for (i = 0; i<4; i=i+1){
-    int gerkonValue1 = digitalRead(arrZones[i]);                                                // Считываем значение с A0   
-    if(gerkonValue1 == LOW && flag == 0){
-      bot.sendMessage(CHAT_ID, "Сработка!!!" + String(arrZones[i]), "");
+  for (i = 0; i<4; i=i+1){             //цикл проверки состояния всех датчиков
+    int gerkonValue1 = digitalRead(arrZones[i]);          // Считываем значение пина   
+    if(gerkonValue1 == LOW && flag == 0){   // если на читаемом пине низкий уровень и флаг предыдущей сработки равен 0
+      bot.sendMessage(CHAT_ID, "Сработка!!!" + String(arrZones[i]), ""); // тогда тревога
       Serial.println("Сработка!!!" + String(arrZones[i]));
-      flag = arrZones[i];
+      flag = arrZones[i];  //во флаг пишем сработавший пин
       Serial.println(String(flag));
-      gerkonValue1 = HIGH;
+      gerkonValue1 = HIGH;     // восстанавливаем высокий уровень переменной
       delay(100);
       
     }
-    else if(flag != 0){int gv = digitalRead(flag);
-         if (gv == HIGH){Serial.println("Vosstanovlenie datchika " + String(flag));
-         flag = 0;
+    else if(flag != 0){int gv = digitalRead(flag); // если выставлен флаг сработки и уровень на пине восстановился:
+         if (gv == HIGH){Serial.println("Vosstanovlenie datchika " + String(flag)); //отбой  
+         flag = 0; //восстанавливаем флаг
          }
     }
        // gprs_send(String(arrZones[i]));
@@ -145,8 +145,8 @@ void gprs_init() {  //Процедура начальной инициализа
   Serial.println("GPRG init complete");
 }
 
-void gprs_send(String data) {  //Процедура отправки данных на сервер
-  //отправка данных на сайт
+void gprs_send(String data) {  //Процедура отправки данных по GPRS
+  
   int d = 400;
   Serial.println("Send start");
   Serial.println("setup url");
@@ -178,75 +178,4 @@ String ReadGSM() {  //функция чтения данных от GSM моду
 //   gprs_init();
 //   }  
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  // int gerkonValue1 = digitalRead(zone1);                                                // Считываем значение с A0   
-  // if(gerkonValue1 == LOW){
-  //   bot.sendMessage(CHAT_ID, "Сработка зона1!!!", "");
-  //   Serial.println("Сработка зона1!!!");
-  //   // count -= 1;                                                                             // Уменьшаем счётчик на 1  
-  //   delay(1000);                                                                           // Пауза 5 секунд  
-  // }
-  //  int gerkonValue2 = digitalRead(zone2);                                                // Считываем значение с A0   
-  // if(gerkonValue2 == LOW){
-  //   bot.sendMessage(CHAT_ID, "Сработка зона2!!!", "");
-  //   Serial.println("Сработка зона2!!!");
-  //   // count -= 1;                                                                             // Уменьшаем счётчик на 1  
-  //   delay(1000);                                                                           // Пауза 5 секунд  
-  // }
-  //  int gerkonValue3 = digitalRead(zone3);                                                // Считываем значение с A0   
-  // if(gerkonValue3 == LOW){
-  //   bot.sendMessage(CHAT_ID, "Сработка зона3!!!", "");
-  //   Serial.println("Сработка зона3!!!");
-  //   // count -= 1;                                                                             // Уменьшаем счётчик на 1  
-  //   delay(1000);                                                                           // Пауза 5 секунд  
-  // }
-  //  int gerkonValue4 = digitalRead(zone4);                                                // Считываем значение с A0   
-  // if(gerkonValue4 == LOW){
-  //   bot.sendMessage(CHAT_ID, "Сработка зона4!!!", "");
-  //   Serial.println("Сработка зона4!!!");
-  //   // count -= 1;                                                                             // Уменьшаем счётчик на 1  
-  //   delay(1000);                                                                           // Пауза 5 секунд  
-  // }
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  // int sensorValue = analogRead(waterSensor);                                                // Считываем значение с A0   
-  // if(waterDetected && count){
-  //   bot.sendMessage(CHAT_ID, "Сработка!!!", "");
-  //   Serial.println("Сработка!!!");
-  //   count -= 1;                                                                             // Уменьшаем счётчик на 1  
-  //   delay(5000);                                                                           // Пауза 5 секунд  
-     
-  // }
-     
-  // if (sensorValue > drop) {
-  //   waterDetected = true;                                                                   // Состояние датчика
-  // }
-  // else {
-  //   waterDetected = false;                                                                  // Состояние датчика
-  //   count = 3;                                                                              // Количество сообщений снова 3
-  // }
-
+ 
